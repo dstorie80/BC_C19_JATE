@@ -24,7 +24,20 @@ warmStrategyCache({
   strategy: pageCache,
 });
 
-registerRoute(({ request }) => request.mode === "navigate", pageCache);
+registerRoute(
+  ({ request }) => request.destination === "style",
+  new CacheFirst({
+    cacheName: "css-cache",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+      }),
+    ],
+  })
+);
 
 // TODO: Implement asset caching
 registerRoute(

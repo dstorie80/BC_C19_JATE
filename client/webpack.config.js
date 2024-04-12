@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 const path = require("path");
 const { InjectManifest } = require("workbox-webpack-plugin");
+const isProduction = process.env.NODE_ENV === "production";
 
 // TODO: Add and configure workbox plugins for a service worker and manifest file.
 // TODO: Add CSS loaders and babel to webpack.
@@ -25,18 +26,14 @@ module.exports = () => {
         template: "./index.html",
         title: "Jate",
       }),
-      // process.env.NODE_ENV === "production"
-      //   ? [
-      //       new InjectManifest({
-      //         swSrc: "./src-sw.js",
-      //         swDest: "src-sw.js",
-      //       }),
-      //     ]
-      //   : [],
-      new InjectManifest({
-        swSrc: "./src-sw.js",
-        swDest: "src-sw.js",
-      }),
+      ...(isProduction
+        ? [
+            new InjectManifest({
+              swSrc: "./src/sw.js",
+              swDest: "sw.js",
+            }),
+          ]
+        : []),
       new WebpackPwaManifest({
         name: "Just Another Text Editor",
         inject: true,
